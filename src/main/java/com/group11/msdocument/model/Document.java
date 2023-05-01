@@ -31,13 +31,12 @@ public class Document {
     @Column(nullable = false,name = "customer_id")
     private Long customerId;
 
-//    TODO
     @JsonProperty("is_approved")
     @Column(name = "is_approved")
     private boolean isApproved = false;
 
     @JsonProperty("approved_by")
-    @Column(nullable=false, name = "approved_by")
+    @Column(name = "approved_by")
     private Long approvedBy;
 
     @JsonProperty("document_type")
