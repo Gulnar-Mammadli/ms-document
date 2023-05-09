@@ -6,6 +6,8 @@ import com.group11.msdocument.model.dto.DocumentDto;
 import com.group11.msdocument.model.dto.DocumentUpdateDto;
 import com.group11.msdocument.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,8 +25,9 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
 
-   private final String FOLDER_PATH= "C:/Users/mammadli/Desktop/UploadedFiles/";
-    public Document uploadDocument(DocumentDto documentDto,MultipartFile file) throws IOException {
+    private final String FOLDER_PATH = "C:/Users/mammadli/Desktop/UploadedFiles/";
+
+    public Document uploadDocument(DocumentDto documentDto, MultipartFile file) throws IOException {
         Optional<Document> result = documentRepository.findByCustomerIdAndLoanIdAndDocumentType(documentDto.getCustomerId(),
                 documentDto.getLoanId(), documentDto.getDocumentType());
         if (result.isEmpty()) {
@@ -39,19 +42,42 @@ public class DocumentService {
         return null;
     }
 
-    public byte[] downloadFile(String fileName) throws IOException {
+    public String downloadFile(String fileName) throws IOException {
         Optional<Document> fileData = documentRepository.findByFileName(fileName);
-        if(fileData.isPresent()){
+        if (fileData.isPresent()) {
             String filePath = fileData.get().getFilePath();
-            byte[] response = Files.readAllBytes(new File(filePath).toPath());
-            return response;
+            File file = new File(filePath);
+            String fileType = getFileExtension(file);
+
+            if (fileType.equalsIgnoreCase("pdf")) {
+                PDDocument document = PDDocument.load(file);
+                String text = new PDFTextStripper().getText(document);
+                document.close();
+                return text;
+            } else if (fileType.equalsIgnoreCase("txt")) {
+                String text = new String(Files.readAllBytes(file.toPath()));
+                return text;
+            } else {
+                throw new UnsupportedOperationException("Unsupported file type: " + fileType);
+            }
+
         }
         return null;
     }
 
 
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex == -1) {
+            return "";
+        }
+        return fileName.substring(dotIndex + 1);
+    }
+
+
     //    TODO ancaq approved olmamislar update oluna biler?
-    public Document updateDocument(DocumentUpdateDto documentUpdateDto, MultipartFile file,Long documentId) throws IOException {
+    public Document updateDocument(DocumentUpdateDto documentUpdateDto, MultipartFile file, Long documentId) throws IOException {
         Optional<Document> result = documentRepository.findById(documentId);
         if (result.isPresent()) {
             Document document = DocumentMapper.INSTANCE.mapFromDocumentUpdateDto(documentUpdateDto);
@@ -60,7 +86,7 @@ public class DocumentService {
             document.setCreatedAt(result.get().getCreatedAt());
             document.setUpdatedAt(LocalDateTime.now());
 
-            if(file !=null && !file.isEmpty()){
+            if (file != null && !file.isEmpty()) {
                 if (result.get().getFilePath() != null) {
                     Files.deleteIfExists(Paths.get(result.get().getFilePath()));
                 }
@@ -73,8 +99,6 @@ public class DocumentService {
         }
         return null;
     }
-
-
 
 
     public List<Document> getDocumentByCustomerId(Long customerId) {

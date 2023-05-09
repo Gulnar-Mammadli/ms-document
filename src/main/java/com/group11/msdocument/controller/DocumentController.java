@@ -30,8 +30,8 @@ public class DocumentController {
 
 
 //TODO
-    @GetMapping("/download/{fileName}")
-    byte[] downloadFile(@PathVariable String fileName) throws IOException {
+    @GetMapping("/read/{fileName}")
+    String readFile(@PathVariable String fileName) throws IOException {
         return documentService.downloadFile(fileName);
     }
 
