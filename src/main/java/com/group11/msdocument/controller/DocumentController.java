@@ -3,7 +3,6 @@ package com.group11.msdocument.controller;
 import com.group11.msdocument.model.Document;
 import com.group11.msdocument.model.dto.DocumentDto;
 import com.group11.msdocument.model.dto.DocumentUpdateDto;
-import com.group11.msdocument.model.enums.DocumentType;
 import com.group11.msdocument.service.DocumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +23,26 @@ public class DocumentController {
 
     @PostMapping(value = "/upload", consumes = {MediaType.APPLICATION_JSON_VALUE,
                                                     MediaType.MULTIPART_FORM_DATA_VALUE})
-    @ResponseBody Document uploadDocument(@RequestPart("json") @Valid DocumentDto documentDto,
+    @ResponseBody Document uploadDocument(@RequestPart("dto") @Valid DocumentDto documentDto,
                             @RequestPart("file") MultipartFile file) throws IOException {
         return documentService.uploadDocument(documentDto, file);
     }
 
 
-    @PutMapping("/{documentId}")
-    Document updateDocument(@RequestBody DocumentUpdateDto documentUpdateDto, @PathVariable Long documentId) {
-        return documentService.updateDocument(documentUpdateDto, documentId);
+//TODO
+    @GetMapping("/download/{fileName}")
+    byte[] downloadFile(@PathVariable String fileName) throws IOException {
+        return documentService.downloadFile(fileName);
     }
 
-    @GetMapping("/{documentId}")
+    @PutMapping("/{documentId}")
+    Document updateDocument(@RequestPart("dto") DocumentUpdateDto documentUpdateDto,
+                            @RequestPart("file") MultipartFile file,
+                            @PathVariable Long documentId) throws IOException {
+        return documentService.updateDocument(documentUpdateDto,file, documentId);
+    }
+
+    @GetMapping("/documentId/{documentId}")
     Document fetchDocument(@PathVariable Long documentId) {
         return documentService.getDocumentByDocumentId(documentId);
     }
