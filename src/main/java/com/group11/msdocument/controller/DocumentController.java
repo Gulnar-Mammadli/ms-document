@@ -47,8 +47,13 @@ public class DocumentController {
         return documentService.getDocumentByDocumentId(documentId);
     }
 
+    @GetMapping("/loan/{loanId}")
+    List<Document> getDocumentsByLoanId(@PathVariable Long loanId) {
+        return documentService.getDocumentsByLoanId(loanId);
+    }
+
     @GetMapping("/customer/{customerId}")
-    List<Document> getDocument(@PathVariable Long customerId) {
+    List<Document> getDocuments(@PathVariable Long customerId) {
         return documentService.getDocumentByCustomerId(customerId);
     }
 

@@ -13,6 +13,7 @@ public interface DocumentRepository extends JpaRepository<Document,Long> {
 
     Optional<Document> findByCustomerIdAndLoanIdAndDocumentType(Long customerId, Long loanId, DocumentType documentType);
     Optional<List<Document>> findAllByCustomerId(Long customerId);
+    Optional<List<Document>> findAllByLoanId(Long loanId);
     Optional<Document> findByFileName(String fileName);
 
 }

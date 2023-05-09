@@ -123,4 +123,8 @@ public class DocumentService {
     }
 
 
+    public List<Document> getDocumentsByLoanId(Long loanId) {
+        Optional<List<Document>> documents = documentRepository.findAllByLoanId(loanId);
+        return documents.orElse(null);
+    }
 }
