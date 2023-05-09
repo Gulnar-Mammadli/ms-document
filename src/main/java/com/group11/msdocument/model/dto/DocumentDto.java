@@ -2,7 +2,6 @@ package com.group11.msdocument.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.group11.msdocument.model.enums.DocumentType;
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +26,4 @@ public class DocumentDto {
     @NotNull
     @JsonProperty("document_type")
     private DocumentType documentType;
-
-    @Lob
-    private byte[] fileData;
 }
