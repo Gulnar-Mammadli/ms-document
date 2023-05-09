@@ -52,7 +52,9 @@ public class Document {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Lob
-    private byte[] fileData;
+    private String fileName;
+
+    private String filePath;
+
 
 }
