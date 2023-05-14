@@ -29,12 +29,6 @@ public class DocumentController {
     }
 
 
-//TODO
-    @GetMapping("/read/{fileName}")
-    String readFile(@PathVariable String fileName) throws IOException {
-        return documentService.downloadFile(fileName);
-    }
-
     @PutMapping("/{documentId}")
     Document updateDocument(@RequestPart("dto") DocumentUpdateDto documentUpdateDto,
                             @RequestPart("file") MultipartFile file,
